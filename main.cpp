@@ -31,6 +31,7 @@ int L, b, T = 0;
 vector<int> ejercicio1();
 int ejercicio2();
 vector<string> obtenerPalabras();
+int ejercicio2();
 
 main(){
 	cout << "Daniel Monzalvo-A01021514\nTarea 3\nEjercicio 1" << endl;
@@ -64,7 +65,7 @@ main(){
 	// Ejercicio 2
 	cout << endl << "-------------------------------------------------" << endl;
 	cout << "Ejercicio 2" << endl;
-
+	cout << "Costo:" << ejercicio2();
 
 	return 0;
 }
@@ -96,12 +97,36 @@ vector<int> ejercicio1(){
 }
 
 int ejercicio2(){
-	int d = 0;
-	vector<string> s = obtenerPalabras();
-	if (T < L){
-		d = L-T;
+		cout << "Supongamos que b = 1mm\nUna letra tiene una longitud igualmente de 1mm" << endl;
+		cout << "Escriba la longitud de un linea en milimetros:" << endl;
+		cin >> L;
+		// Tamano espacios
+		b = 1;
+		// Tamano de espacios en la linea actual
+		int bs = 1;
+		// tamano de los caracteres
+		int tChar = 1;
+		// longitud en milimetros de la linea actual
+		l = 0;
+		// Linea actual
+		string linea = "";
+		// numero de espacios en la linea actual
+		int espacios = 0;
 
+	vector<string> s = obtenerPalabras();
+
+	for(auto item:s){
+		if((l+item.length*tChar + b) < L){
+				l += (item.length()*tChar) + b;
+				espacios ++;
+				linea += " " + item;
+		}
+		else {
+				bs = (L - l) / 
+
+		}
 	}
+
 }
 
 vector<string> obtenerPalabras(){
