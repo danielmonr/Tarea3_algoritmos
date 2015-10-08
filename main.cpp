@@ -183,6 +183,8 @@ void ejercicio4(){
 		}
 }
 
+bool estable(int i, int j
+
 vector<string> obtenerPalabras(){
 		//int tam = 0;
 	cout << "Supongamos que b = 1mm\nUna letra tiene una longitud igualmente de 1mm" << endl;
