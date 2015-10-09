@@ -68,12 +68,14 @@ int main(){
 	for (auto item:sol)
 		cout << item << ", ";
 	cout << endl;
-	
+	cout << "Complejidad O(n), Metodo de diseno de algoritmo: avido" << endl;
+
 
 	// Ejercicio 2
 	cout << endl << "-------------------------------------------------" << endl;
 	cout << "Ejercicio 2" << endl;
 	cout << "Costo Total:" << ejercicio2() << endl;
+	cout << "Complejidad O(n), Metodo de diseno de algoritmo: avido" << endl;
 	//ejercicio2();
 
 	cout << endl << "-------------------------------------------------" << endl;
@@ -81,9 +83,13 @@ int main(){
 
 	 initEjercicio3();
 
+	cout << "Complejidad O(n*n), Metodo de diseno de algoritmo: programacion dinamica" << endl;
+
 	cout << endl << "-------------------------------------------------" << endl;
 	cout << "Ejercicio 4" << endl;
 	ejercicio4();
+
+	cout << "Complejidad O(n^n), Metodo de diseno de algoritmo: backtracking" << endl;
 
 
 	return 0;
