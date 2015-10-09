@@ -19,7 +19,13 @@
  */
 
 #include <iostream>
+#include <cstring>
 #include <vector>
+#include <limits>
+
+#define Arriba 'U'
+#define Izq 'I'
+#define Diagonal 'D'
 
 using namespace std;
 // Variable ej1
@@ -27,35 +33,64 @@ int maxKilometraje;
 vector<int> posicion;
 // Variables ej2
 int L, b = 0;
+// Variables ejercicio 3
+char origen[100][100];
+int LongS[100][100];
+const int numPer = 4;
+// Variables ejercicio 4
+int H[numPer][numPer] = {{3,1,2,0},{3,2,0,1},{1,3,0,2},{2,1,3,0}};
+int M[numPer][numPer] = {{1,3,2,0},{0,2,3,1},{1,3,2,0},{2,1,3,0}};
+int ordenM[numPer][numPer] = {{3,1,2,0},{2,3,1,0},{2,0,3,1},{3,1,0,2}};
+int ordenH[numPer][numPer] = {{3,0,2,1},{0,3,1,2},{3,0,2,1},{3,1,0,2}};
+int parejasH[numPer];
+int parejasM[numPer];
+bool disp[numPer];
+bool succ;
+
 // funciones
 vector<int> ejercicio1();
 int ejercicio2();
 vector<string> obtenerPalabras();
 int ejercicio2();
+void initEjercicio3();
+void ejercicio3(const char*, const char*);
+void ejercicio4();
+void imprimirMaxSecCom(const char*,int, int);
+bool estable(int, int, int);
+void juntar(int, bool);
 
 int main(){
 	cout << "Daniel Monzalvo-A01021514\nTarea 3\nEjercicio 1" << endl;
 	// Ejercicio 1
-	/*
+
 	vector<int> sol = ejercicio1();
     cout << "Solucion: " << endl;
 	for (auto item:sol)
 		cout << item << ", ";
 	cout << endl;
-	*/
+	
 
 	// Ejercicio 2
 	cout << endl << "-------------------------------------------------" << endl;
 	cout << "Ejercicio 2" << endl;
-	//cout << "Costo:" << ejercicio2();
-	ejercicio2();
-//	obtenerPalabras();
+	cout << "Costo Total:" << ejercicio2() << endl;
+	//ejercicio2();
+
+	cout << endl << "-------------------------------------------------" << endl;
+	cout << "Ejercicio 3" << endl;
+
+	 initEjercicio3();
+
+	cout << endl << "-------------------------------------------------" << endl;
+	cout << "Ejercicio 4" << endl;
+	ejercicio4();
+
 
 	return 0;
 }
 
 vector<int> ejercicio1(){
-    
+
     posicion.push_back(10);
     posicion.push_back(15);
     posicion.push_back(23);
@@ -66,15 +101,15 @@ vector<int> ejercicio1(){
     posicion.push_back(60);
     posicion.push_back(70);
     posicion.push_back(75);
-    
+
     cout << "Posicion de las gasolineras: " << endl;
     for (auto item:posicion)
         cout << item << ", ";
     cout << endl;
-    
+
     cout << "Cual es el kilometraje maximo del tanque de gasolina: " << endl;
     cin >> maxKilometraje;
-    
+
 	vector<int> solucion;
 	int pos = 0;
 	int distancia = 0;
@@ -121,21 +156,14 @@ int ejercicio2(){
 		// Numero de linea
 		int n = 0;
 
+		bool aux = false;
+		bool nueva= true;
 
 	for(auto item:s){
-		if(((l+item.length()*tChar) + b) < L){
-				l = l + (item.length()*tChar) + b;
-				++espacios;
-				linea = linea + " " + item;
-				cout << linea << endl;
-		}
-		else {
-				if (item != s.back()){
-					costo = (L-l)/espacios;
-				}
-				else{
-						costo = 0;
-				}
+		if(((l+item.length()*tChar)) > L){
+			// cout << "tamano: " << l;
+				cout << item << endl;
+				costo = (L-l)/espacios;
 				if (espacios != 0)
 					bs = ((L - l) / espacios) + b;
 				++n;
@@ -144,46 +172,134 @@ int ejercicio2(){
 
 				bs = b;
 				linea = "";
-				l = 0;
+				l = item.length()*tChar;
 				espacios = 0;
 				costo = 0;
+				nueva = true;
+
 		}
+
+			l = l + (item.length()*tChar);
+			if (item != s.back()){
+				l += b;
+				++espacios;
+			}
+			if (!nueva)
+			linea = linea + " ";
+			linea += item;
+			nueva = false;
+			// cout << linea << endl;
 	}
+
+	if(linea != ""){
+		costo = 0;
+		if (espacios != 0)
+			bs = ((L-l)/ espacios) +b;
+			++n;
+			cout << "Linea " << n << " -->" << linea << "<-- " << "costo: " << costo << "b = " << bs << endl;
+			T+= costo;
+	}
+
 	return T;
 }
 
-void ejercicio3(){
+void ejercicio3(const char X[], const char Y[]){
 		int n, m;
-		char* X;
-		char* Y;
-		char** L;
+		n = (int)strlen(X);
+		m = (int)strlen(Y);
 
 		for (int i = 0; i < n; ++i)
-				L[i][0] = 0;
+				LongS[i][0] = 0;
 		for (int i = 0; i < m;++i)
-				L[0][i] = 0;
+				LongS[0][i] = 0;
 
-
+		for (int i = 1; i <= n; ++i){
+			for (int j = 1; j <= m; ++j){
+				if (X[i] == Y[j]){
+					LongS[i][j] = LongS[i-1][j-1] +1;
+					origen[i][j] = Diagonal;
+				}
+				else if (LongS[i-1][j] >= LongS[i][j-1]){
+					LongS[i][j] = LongS[i-1][j];
+					origen[i][j] = Arriba;
+				}
+				else{
+					LongS[i][j] = LongS[i][j-1];
+					origen[i][j] = Izq;
+				}
+			}
+		}
+		cout << "Solucion: ";
+		imprimirMaxSecCom(X,n,m);
+		cout << endl;
 }
 
 void ejercicio4(){
-		// Numero de Hombres y de Mujeres
-		int n = 3;
-		// Matriz de Hombres
-		int H[n][n];
-		// Matriz de Mujeres
-		int M[n][n];
-		// Parejas siendo i el hombre y el valor de i la mujer
-		int p[n];
-		// Disponibilidad de la Mujer
-		bool disp[n];
+		for(int i = 0; i < numPer; ++i)
+				disp[i] = true;
 
-		for (int i = 0; i < n; ++i){
-				
+				juntar(0, succ);
+
+		for (int i = 0; i < numPer; i++){
+			cout << "Solucion: " << endl;
+			cout << "Hombre " << i << "con Mujer " << parejasM[i] << endl;
 		}
+
 }
 
-bool estable(int i, int j
+void juntar(int iterador, bool success){
+	int prefiere = 0;
+	int preferencia = 0;
+
+	while(!success){
+		for (int i = 0; i < numPer; ++i){
+			preferencia = M[iterador][i];
+
+			if (disp[preferencia] && estable(iterador, preferencia, i)){
+				parejasH[iterador] = preferencia;
+				parejasM[preferencia] = iterador;
+				disp[preferencia] = 0;
+				if (iterador < numPer){
+					juntar(iterador+1, success);
+				}
+				if(!success){
+					disp[preferencia] = 1;
+				}
+			}
+			else{
+				success = true;
+			}
+		}
+	}
+}
+
+bool estable(int it, int pref, int muj){
+	bool s = 1;
+	int mejorMujer, mejorHombre, limite;
+	int i = 0;
+
+	while (i < muj && s)
+	{
+		mejorMujer = M[it][i];
+		i++;
+
+		if (!disp[mejorMujer])
+			s = ordenM[mejorMujer, it] > ordenM[mejorMujer, parejasH[mejorMujer]];
+	}
+
+	i = 0;
+	limite = H[pref][it];
+
+	while (i < limite && s)
+	{
+		mejorHombre = H[pref][i];
+		i++;
+
+		if (mejorHombre < it)
+			s = ordenH[mejorHombre][pref] > ordenH[mejorHombre][parejasM[mejorHombre]];
+	}
+	return s;
+}
 
 vector<string> obtenerPalabras(){
 		//int tam = 0;
@@ -192,12 +308,11 @@ vector<string> obtenerPalabras(){
 	string frase, temp;
 	cout << "Inserte la frase: " << endl;
 	getline(cin, frase);
-	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 	cout << "Inserte el tamano de la linea" << endl;
 	cin >> L;
 
 	//L = tam;
-	
+
 	//cout << "Tam: " << tam << endl;
 	//cout << "frase: " << frase << endl;
 
@@ -216,4 +331,33 @@ vector<string> obtenerPalabras(){
 	//for (auto item:s)cout << item <<endl;
 
 	return s;
+}
+
+void imprimirMaxSecCom(const char* X, int i, int j){
+	if (i == 0 | j == 0){
+		return;
+	}
+	if (origen[i][j] == Diagonal){
+		imprimirMaxSecCom(X, i-1, j-1);
+		cout << X[i];
+	}
+	else{
+		if (origen[i][j] == Arriba){
+			imprimirMaxSecCom(X, i-1,j);
+		}
+		else{
+			imprimirMaxSecCom(X,i,j-1);
+		}
+	}
+}
+
+void initEjercicio3(){
+	string p1, p2;
+	cout << "Introduzca una palabra (no se aceptan espacios): " << endl;
+	cin >>p1;
+	cout << "Introduzca otra palabra: " << endl;
+	cin >> p2;
+	const char* X = p1.c_str();
+	const char* Y = p2.c_str();
+	ejercicio3(X,Y);
 }
